@@ -50,6 +50,7 @@ PORT=5000
 MONGO_URI=mongodb+srv://harshita102017_db_user:7VbXzmVmHF4NTILP@findmystuff.ajtlnvq.mongodb.net/?retryWrites=true&w=majority&appName=findmystuff
 JWT_SECRET=8642babb91b4aec22c46507851e5d34edebc76d6705bbca9eb830230fb35471495c3fdda90bae4e436133e12fd80b4f0a88457cefcf38413a02ba6b899162023
 ```
+import multer from "multer";
 
 4. **Run the backend server:**
 
