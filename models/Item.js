@@ -7,7 +7,7 @@ const itemSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   description: { type: String },
   type: { type: String, enum: ["lost", "found"], required: true },
-  image: { type: String }, // base64 string or URL
+  image: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Item", itemSchema);

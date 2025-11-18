@@ -17,7 +17,10 @@ router.post("/signup", async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
     const newUser = new User({ fullName, email, password: hashed });
-    await newUser.save();
+  // Add a signup history event
+  newUser.history = newUser.history || [];
+  newUser.history.push({ action: "Signup", details: "User signed up" });
+  await newUser.save();
 
     // Create JWT token
     const token = jwt.sign({ id: newUser._id, email }, process.env.JWT_SECRET, {
@@ -47,7 +50,10 @@ router.post("/login", async (req, res) => {
 
     // Update last login time
     user.lastLogin = new Date();
-    await user.save();
+  // Record login in history
+  user.history = user.history || [];
+  user.history.push({ action: "Login", details: "User logged in", at: user.lastLogin });
+  await user.save();
 
     // Create JWT
     const token = jwt.sign({ id: user._id, email }, process.env.JWT_SECRET, {
@@ -81,6 +87,7 @@ router.get("/profile", async (req, res) => {
       fullName: user.fullName,
       email: user.email,
       lastLogin: user.lastLogin,
+      history: user.history || []
     });
   } catch (err) {
     res.status(401).json({ message: "Invalid or expired token" });

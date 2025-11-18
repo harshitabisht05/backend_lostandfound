@@ -38,6 +38,29 @@ router.post("/", upload.single("image"), async (req, res) => {
     });
 
     await newItem.save();
+    // If the request includes a userId, record this action in that user's history
+    if (req.body.userId) {
+      try {
+        // dynamic import so we don't break mixed-module resolution
+        const UserModule = await import("../models/User.js");
+        const User = UserModule.default;
+        const user = await User.findById(req.body.userId);
+        if (user) {
+          user.history = user.history || [];
+          user.history.push({
+            action: "Reported an item",
+            item: newItem._id,
+            details: `${type} - ${itemName}`,
+            at: new Date()
+          });
+          await user.save();
+        }
+      } catch (err) {
+        // log but don't fail the request if history saving fails
+        console.error("Failed to save user history:", err);
+      }
+    }
+
     res.status(201).json({ message: "Item reported successfully", item: newItem });
   } catch (err) {
     console.error(err);
